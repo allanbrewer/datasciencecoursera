@@ -1,0 +1,25 @@
+install.packages("swirl")
+library(swirl)
+swirl()
+install_from_swirl("Data Analysis")
+install_from_swirl("Open Intro")
+install_from_swirl("Regression Model")
+install_from_swirl("Regression Models")
+install_from_swirl("Getting and Cleaning Data")
+install_from_swirl("Statistical Infenrece")
+install_from_swirl("Statistical Inference")
+swirl()
+x <- matrix(1:20, 2, 2)
+x
+read.csv
+read.csv()
+getwd()
+getwd()
+dir()
+polution
+p <- read.csv("quiz_1/hw1_data.csv")
+p
+cd
+cd()
+DIR
+dir
