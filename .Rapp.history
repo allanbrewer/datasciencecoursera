@@ -1,25 +1,68 @@
+install.packages("slidify")
+install.package("KernSmooth")
+install.packages("KernSmooth")
+install.packages("slidify")
+library(KernSmooth)
+install.packages(swirl)
 install.packages("swirl")
 library(swirl)
 swirl()
 install_from_swirl("Data Analysis")
 install_from_swirl("Open Intro")
-install_from_swirl("Regression Model")
 install_from_swirl("Regression Models")
 install_from_swirl("Getting and Cleaning Data")
-install_from_swirl("Statistical Infenrece")
 install_from_swirl("Statistical Inference")
 swirl()
-x <- matrix(1:20, 2, 2)
+x <- 4
+class(x)
+print(x)
 x
-read.csv
-read.csv()
+a <- (1L,2,"hello",TRUE)
+a <- (1l,2,"hello",TRUE)
+a <- (1,2,"hello",TRUE)
+a <- c(1,2,"hello",TRUE)
+class(a)
+x <- c(4, "a", TRUE)
+class(x)
+x[[3]]
+x[[1]]
+x <- list(4, "a", TRUE)
+x[[1]]
+x <- 1:4
+y <- 2
+x + y
+z <- x + y
+z
+class(z)
+x <- c(3, 5, 10 , 12, 6)
+class(x)
+x
+x <- c(3, 5, 1, 10 , 12, 6)
+x
+X[x > 6] <- 0
+x[x > 6] <- 0
+x
+x <- c(3, 5, 1, 10 , 12, 6)
+x[x <= 5] <- 0
+x
 getwd()
-getwd()
-dir()
-polution
-p <- read.csv("quiz_1/hw1_data.csv")
-p
-cd
-cd()
-DIR
-dir
+air <- read.csv("r_programming/quiz_1/air.csv")
+air
+air$ozone
+air$Ozone
+good <- complete.clases(air)
+good <- complete.cases(air)
+good
+air[good,]
+o31 <- air$ozone
+o31
+o <- air$Ozone
+o
+o <- good$Ozone
+o <- aor[good,]$Ozone
+o <- air[good,]$Ozone
+o
+o <- air$Ozone
+o
+air
+air[c(good, 119), ]

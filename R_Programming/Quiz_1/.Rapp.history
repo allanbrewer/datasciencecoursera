@@ -1,0 +1,238 @@
+install.packages("slidify")
+install.package("KernSmooth")
+install.packages("KernSmooth")
+install.packages("slidify")
+library(KernSmooth)
+install.packages(swirl)
+install.packages("swirl")
+library(swirl)
+swirl()
+install_from_swirl("Data Analysis")
+install_from_swirl("Open Intro")
+install_from_swirl("Regression Models")
+install_from_swirl("Getting and Cleaning Data")
+install_from_swirl("Statistical Inference")
+swirl()
+x <- 4
+class(x)
+print(x)
+x
+a <- (1L,2,"hello",TRUE)
+a <- (1l,2,"hello",TRUE)
+a <- (1,2,"hello",TRUE)
+a <- c(1,2,"hello",TRUE)
+class(a)
+x <- c(4, "a", TRUE)
+class(x)
+x[[3]]
+x[[1]]
+x <- list(4, "a", TRUE)
+x[[1]]
+x <- 1:4
+y <- 2
+x + y
+z <- x + y
+z
+class(z)
+x <- c(3, 5, 10 , 12, 6)
+class(x)
+x
+x <- c(3, 5, 1, 10 , 12, 6)
+x
+X[x > 6] <- 0
+x[x > 6] <- 0
+x
+x <- c(3, 5, 1, 10 , 12, 6)
+x[x <= 5] <- 0
+x
+swirl()
+swirl
+swirl()
+1:20
+p1:10
+pi:10
+15:1
+?`:`
+seq(1,20)
+seq(0,10,by=0.5)
+seq(5,10,length=30)
+my_seq <- seq(5,10,length=30)
+my_SEQ
+my_seq
+length(my_seq)
+1:length(my_seq)
+seq(along.with = my_seq)
+seq_along(my_seq)
+rep(0,times=40)
+rep(c(0,1,2),times=10)
+rep(c(0,1,2),each=10)
+num_vect <- (0.5,55,-10,6)
+num_vect <- c(0.5,55,-10,6)
+tf <- num_vect<1
+tf
+num_vect >= 6
+my_char <- c("My","name","is")
+my_char
+paste(my_char," ")
+paste(my_char,collapse=" ")
+my_name <- c(my_char,"Allan Brewr")
+my_name
+paste(my_name,collapse=" ")
+paste("Hello","world!", sep=" ")
+paste(1:3,c("X","Y","Z"),sep="")
+paste(LETTERS,1:4,sep="")
+paste(LETTERS,1:4,sep="-")
+ls()
+rm(list=ls())
+ls()
+swirl()
+x <- c(44,NA,5,NA)
+x*3
+y <- rnorm(1000)
+z <- rep(NA, 1000)
+my_data <- sample(c(y,z),100)
+my_na <- is.na(my_data)
+my_na
+my_data == NA
+sum(my_na)
+my_data
+0/0
+inf-inf
+Inf-Inf
+x
+x[1:10]
+x[is.na(x)]
+sum(x[is.na(x)])
+y <- x[!is.na(x)]
+y
+y[y>0]
+x[x>0]
+x[!is.na(x) & x>0]
+x[c(3,5,7)]
+x[0]
+x[3000]
+x[c(-2,-10]
+x[c(-2,-10)]
+x[-c(2,10)]
+vect <- (foo=11,bar=2,norf=NA)
+vect <- c(foo=11,bar=2,norf=NA)
+vect
+names(vect)
+vect2 <- c(11,2,NA)
+names(vect2) <- c("foo","bar","norf")
+identical(vect;vect2)
+identical(vect,vect2)
+vect["bar"]
+vect[c("foo","bar")]
+my_vector <- 1:20
+my_vector
+dim(my_vector)
+length(my_vector)
+dim(my_vector) <- C(4,5)
+dim(my_vector) <- c(4,5)
+dim(my_vector)
+attributes(my_vector)
+my_vector
+class(my_vector)
+my_matrix <- my_vector
+?matrix()
+?matrix
+my_matrix2 <- matrix(1:20,nrow=4,ncolumn=5)
+my_matrix2 <- matrix(1:20,nrow=4,ncol=5)
+identical(my_matrix,my_matrix2)
+patients <- c("Bill","Gina","Kelly","Sean")
+cbind(patients,my_matrix)
+my_data <- data.frame(patients,my_matrix)
+my_data
+class(my_data)
+cnames <- c("patient","age","weight","bp","rating","test")
+colnames(my_data) <- cnames
+my_data
+ls()
+ls()
+air <- read.csv("air.csv")
+names(air)
+names("Wind")
+air$Wind
+air_good <- complete.cases(air)
+air_good
+air_good <- air[complete.cases(air)]
+good <- complete.cases[air]
+good <- complete.cases(air)
+air_good <- air[good]
+air_good <- air[good,]
+air
+air_good
+o31 <- air$Ozone > 31
+o31 <- air_good$Ozone > 31
+air_o31 <- air[o31],]
+air_o31 <- air[o31]
+air_o31 <- air[o31,]
+air_o31
+air_o31 <- air_good[o31,]
+air_o31
+t90 <- air_o31$Temp > 90
+t90
+air_o31t90 <- air_o31[t90]
+air_o31t90 <- air_o31[t90,]
+air_o31t90
+mean(air_o31t90$Solar.R)
+x <- list(2,"a","b",TRUE)
+x[[1]]
+class(x[[1]])
+class(x[[1,2]])
+class(x[[1:2]])
+class(x[[c(1,2)]])
+class(x[c(1,2)])
+x[c(1,2)]
+x[c(1:2)]
+x[][c(1:2)]]
+x[[c(1:2)]]
+m5 <- air_good$Month == 5
+sum(m5)
+m5 <- air$Month == 5
+sum(m5)
+air_m5 <- air[m5]
+air_m5 <- air[m5,]
+air_m5
+mean(air_m5$Temp)
+max(air_m5$Ozone)
+m5 <- air_good$Month == 5
+air_m5 <- air[m5]
+air_m5 <- air[m5,]
+max(air_m5$Ozone)
+air_m5 <- air_good[m5]
+air_m5 <- air_good[m5,]
+max(air_m5$Ozone)
+m6 <- air$Month == 6
+air_m6 <- air[m6]
+air_m6 <- air[m6,]
+mean(air_m6$Temp)
+nrow(air)
+nrow(air_o31t90)
+air_o31t90
+swirl()
+TRUE == TRUE
+(FALSE == TRUE) == FALSE
+6 == 7
+6<7
+10<=10
+5!=7
+!(5==7)
+!5==7
+FALSE & FALSE
+TRUE & C(TRUE,FALSE,FALSE)
+TRUE & c(TRUE,FALSE,FALSE)
+TRUE && c(TRUE,FALSE,FALSE)
+TRUE | c(TRUE,FALSE,FALSE)
+TRUE || c(TRUE,FALSE,FALSE)
+5>8 || 6!=8 && 4>3.9
+isTRUE(6>4)
+identical('twins','twins')
+xor(5==6,!FALSE)
+ints <- sample(10)
+ints
+ints > 5
+which(ints>7)
+any(ints<0)
+all(ints>0)
