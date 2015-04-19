@@ -18,17 +18,7 @@ if (exists("nei")) {
 	nei	<- readRDS("summarySCC_PM25.rds")
 }
 
-## Check if SCC already exists in the current environment
-if (exists("scc")) {
-	## Check if dimensions are correct
-	if (!(nrow(scc) == 11717 & ncol(scc) == 15)) { 
-		## Read the Source Classification Code Table if dimensions are incorrect
-		scc	<- readRDS("Source_Classification_Code.rds") 
-		}
-} else {
-	## Read the Source Classification Code Table if it does not exist
-	scc	<- readRDS("Source_Classification_Code.rds")
-}
+## No need for SCC
 
 ##############################################
 ## Step #2 - Manipulate and modify the data as needed
@@ -48,7 +38,7 @@ nei.year.sum <- summarize(group_by(nei, year), total_emissions = sum(Emissions))
 ## Open png Graphics Device with width and height of 480 px
 png(file = "plot1.png", width = 600, height = 600, units = "px", bg = "transparent")
 ## Create the plot in current graphic device
-with(nei.year.sum, plot(year, total_emissions, pch = 19, col = "grey22", xlab = "Years", ylab = "Total Emissions"))
+with(nei.year.sum, plot(year, total_emissions, pch = 19, col = "grey22", xlab = "Years", ylab = "Total Emissions (tons)"))
 lines(nei.year.sum, lwd = 2, col = "steelblue4")
 title(main = "Total Emissions per Year")
 ## Turn off graphic device

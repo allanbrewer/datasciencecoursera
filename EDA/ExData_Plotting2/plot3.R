@@ -18,17 +18,7 @@ if (exists("nei")) {
         nei	<- readRDS("summarySCC_PM25.rds")
 }
 
-## Check if SCC already exists in the current environment
-if (exists("scc")) {
-        ## Check if dimensions are correct
-        if (!(nrow(scc) == 11717 & ncol(scc) == 15)) { 
-                ## Read the Source Classification Code Table if dimensions are incorrect
-                scc	<- readRDS("Source_Classification_Code.rds") 
-        }
-} else {
-        ## Read the Source Classification Code Table if it does not exist
-        scc	<- readRDS("Source_Classification_Code.rds")
-}
+## No need for SCC
 
 ##############################################
 ## Step #2 - Manipulate and modify the data as needed
@@ -56,7 +46,7 @@ nei.bc.sum$type <- as.factor(nei.bc.sum$type)
 png(file = "plot3.png", width = 1200, height = 800, units = "px", bg = "transparent")
 ## Create the plot in current graphic device
 plot3 <- ggplot(nei.bc.sum, aes(year, total_emissions))
-plot3 <- plot3 + labs(title = "Emissions per Year by Type", x = "Years", y = "Total Emissions")
+plot3 <- plot3 + labs(title = "Emissions per Year by Type", x = "Years", y = "Total Emissions  (tons)")
 plot3 <- plot3 + geom_point(col = "gray22", size = 4) + geom_line(col = "steelblue3", size = 1.5)
 plot3 <- plot3 + geom_smooth(col = "firebrick2", method = "lm", se = FALSE) + facet_grid(~type)
 print(plot3)
