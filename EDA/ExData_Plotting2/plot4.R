@@ -39,10 +39,12 @@ nei <- tbl_df(nei)
 scc <- tbl_df(scc)
 
 ## Determine de SCC code for Coal Combultion Related Sources
-## SCC with the word Coal on its description
+## SCC with the word Combustion on SCC Level One and Coal on SCC Level Three
 coal.rows <- grep("[C|c]oal" , scc$SCC.Level.Three)
+combustion.rows <- grep("Combustion", scc$SCC.Level.One)
+select.rows <- intersect(coal.rows, combustion.rows)
 ## Extract SCC code
-scc.codes <- as.vector(scc[coal.rows,1][[1]])
+scc.codes <- as.vector(scc[select.rows,1][[1]])
 
 ## Filter NEI data set by SCC codes for coal
 nei.coal <- filter(nei, SCC %in% scc.codes)

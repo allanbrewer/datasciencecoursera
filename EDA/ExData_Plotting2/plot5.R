@@ -39,7 +39,7 @@ nei <- tbl_df(nei)
 scc <- tbl_df(scc)
 
 ## Determine de SCC code for Motor Vehicles Related Sources
-## SCC with the word Vehicle on its description
+## SCC with the word Vehicle on SCC Level Two, This is the only filter I consired since it Includes On Road and Non Road Vehicles
 mv.rows <- grep("Vehicle" , scc$SCC.Level.Two)
 ## Extract SCC code
 scc.codes <- as.vector(scc[mv.rows,1][[1]])
