@@ -1,0 +1,40 @@
+---
+title: "Data Analysis of the NOAA Storm Data set to determine Weather Event's Economic and Public Health consequences"
+author: "Allan R. Brewer Cappellin"
+output: 
+  html_document:
+    keep_md: true
+    toc: true
+    toc_depth: 2
+---
+
+## Synopsis
+
+This reaseach is aimed to determine the consequence of diferente weather events. The analysis focuses on economical and public health consequences. The data was obtained from a link in the course Reproducible Reaserch in the Coursera Data Science Specialization. Originaly this data comes from the NOAA Database.
+
+## Downloading and Processing the data
+
+Data downloaded from the the web from this url [Data Set](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2).
+
+```{r Download_Dataset, echo=TRUE}
+## download.file(url = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2", destfile = "~/Desktop/NOAA_StormData.csv.bz2")
+```
+
+### Loading Requiered Pacakges
+
+Before loading the data to R and process the data set we must load/install the requiered pacakges for the Analysis.
+
+```{r Require_Packages, echo=TRUE, message=FALSE, warning=FALSE}
+if (!require(dplyr)) { install.packages("dplyr") }
+if (!require(ggplot2)) { install.packages("ggplot2") }
+```
+
+### Load Data into R
+
+After loading the packages we load the data set to the Environment to star the analysis.
+
+```{r Load_Data, echo=TRUE}
+stormdata <- read.csv(bzfile("~/Desktop/NOAA_StormData.csv.bz2"), nrow = 1000)
+stormdata <- read.csv("~/Desktop/NOAA_StormData.csv", nrows = 1000)
+stormdata <- tbl_df(stormdata)
+```
