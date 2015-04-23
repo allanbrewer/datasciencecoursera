@@ -1,28 +1,29 @@
 ---
 title: "Data Analysis of the NOAA Storm Data set to determine Weather Event's Economic and Public Health consequences"
 author: "Allan R. Brewer Cappellin"
+date : "April, 25th 2015"
 output: 
   html_document:
     keep_md: true
     toc: true
-    toc_depth: 2
+    toc_depth: 3
 ---
 
 ## Synopsis
 
-This reaseach is aimed to determine the consequence of diferente weather events. The analysis focuses on economical and public health consequences. The data was obtained from a link in the course Reproducible Reaserch in the Coursera Data Science Specialization. Originaly this data comes from the NOAA Database.
+This research is aimed to determine the consequence of different weather events on economical and public health across the United States. The data was obtained from a link in the course Reproducible Research in the Coursera Data Science Specialization. Originally this data comes from the NOAA Storm Database. This analysis will determine the consequences by Event Type. The public health consequences will be measured by fatalities and injuries. The economical consequences will be measured by cost of by property and crop damage.
 
-## Downloading and Processing the data
+## Downloading Data and Loading Packages
 
-Data downloaded from the the web from this url [Data Set](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2).
+Data downloaded from the the web from this URL [Storm DataSet](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2).
 
 ```{r Download_Dataset, echo=TRUE}
-## download.file(url = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2", destfile = "~/Desktop/NOAA_StormData.csv.bz2")
+## download.file(url = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2", destfile = "./NOAA_StormData.csv.bz2")
 ```
 
-### Loading Requiered Pacakges
+### Loading Required Packages
 
-Before loading the data to R and process the data set we must load/install the requiered pacakges for the Analysis.
+Before loading the data to R and process the data set we must load/install the required packages for the Analysis.
 
 ```{r Require_Packages, echo=TRUE, message=FALSE, warning=FALSE}
 if (!require(dplyr)) { install.packages("dplyr") }
@@ -34,7 +35,34 @@ if (!require(ggplot2)) { install.packages("ggplot2") }
 After loading the packages we load the data set to the Environment to star the analysis.
 
 ```{r Load_Data, echo=TRUE}
-stormdata <- read.csv(bzfile("~/Desktop/NOAA_StormData.csv.bz2"), nrow = 1000)
-stormdata <- read.csv("~/Desktop/NOAA_StormData.csv", nrows = 1000)
+stormdata <- read.csv("~/Desktop/NOAA_StormData.csv", stringsAsFactors = FLASE)
 stormdata <- tbl_df(stormdata)
 ```
+
+## Processing the Data
+
+After loading the data and the packages into R we can star processing the data to do the analysis. The first thing we should do is print out the summary/structure of the data set to understand the variables contained in it.
+
+```{r, echo=TRUE}
+str(stormdata)
+```
+
+From this summary and the [Storm Data Documentation](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf) we can detect the variables that will work for our analysis. The variables are:
+
+- **EVTYPE:** this variable indicates the type of event.
+- **FATALITIES:** this variables indicates the fatalities in the event.
+- **INJURIES:** this variables indicates the injuries in the event.
+- **PROPDMG:** this variables indicates the value of property damage in the event
+- **PROPDMGEXP:** this variables indicates the exponent associated with the property damage Value
+- **CROPDMG:** this variables indicates the value of crop damage in the event
+- **CROPDMGEXP:** this variables indicates the exponent associated with the crop damage Value
+
+Since the other variables in the data set are not used in the entire analysis we can subset the data to contain only the variables we need. We will use the dplyr package previously loaded for this step. After we will group the activity by Event Type to so we can do the data analysis. Finally in this step we print the first rows of the subset and grouped data.
+
+```{r, echo=TRUE}
+stormdata <- select(stormdata, EVTYPE, FATALITIES, INJURIES, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP)
+stormdata <- group_by(stormdata, EVTYPE)
+stormdata
+```
+
+
