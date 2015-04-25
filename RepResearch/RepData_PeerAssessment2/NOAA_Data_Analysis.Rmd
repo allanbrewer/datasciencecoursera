@@ -11,7 +11,7 @@ output:
 
 ## Synopsis
 
-This research is aimed to determine the consequence of different weather events on economical and public health across the United States. The data was obtained from a link in the course Reproducible Research in the Coursera Data Science Specialization. Originally this data comes from the NOAA Storm Database. This analysis will determine the consequences by Event Type. The public health consequences will be measured by fatalities and injuries. The economical consequences will be measured by cost of by property and crop damage.
+This research is aimed to determine the consequence of different weather events on economical and public health across the United States. The data was obtained from a link in the course Reproducible Research in the Coursera Data Science Specialization. Originally this data comes from the NOAA Storm Database. This analysis will determine the consequences by Event Type. The public health consequences will be measured by fatalities and injuries. The economical consequences will be measured by cost of by property and crop damage. From the result obtained we can say that Tornadoes are the most dangerous events for public safety and floods for economic damage. In global Tornadoes are the most dangerous and unpredictable event of all.
 
 ## Downloading Data and Loading Packages
 
@@ -28,20 +28,24 @@ Before loading the data to R and process the data set we must load/install the r
 ```{r Require_Packages, echo=TRUE, message=FALSE, warning=FALSE}
 if (!require(dplyr)) { install.packages("dplyr") }
 if (!require(ggplot2)) { install.packages("ggplot2") }
+if (!require(reshape2)) { install.packages("reshape2") }
+if (!require(knitr)) { install.packages("knitr") }
 ```
+
+## Data Processing
+
+In this section we will load the data and transform it so it can be used to do the analysis and report the results.
 
 ### Load Data into R
 
 After loading the packages we load the data set to the Environment to star the analysis.
 
 ```{r Load_Data, echo=TRUE}
-stormdata <- read.csv("~/Desktop/NOAA_StormData.csv", stringsAsFactors = FALSE)
+stormdata <- read.csv(bzfile("./NOAA_StormData.csv.bz2"), stringsAsFactors = FALSE)
 stormdata <- tbl_df(stormdata)
 ```
 
-## Processing the Data
-
-After loading the data and the packages into R we can star processing the data to do the analysis. The first thing we should do is print out the summary/structure of the data set to understand the variables contained in it.
+After loading the data into R we can star processing the data to do the analysis. The first thing we should do is print out the summary/structure of the data set to understand the variables contained in it.
 
 ```{r, echo=TRUE}
 str(stormdata)
@@ -57,11 +61,10 @@ From this summary and the [Storm Data Documentation](https://d396qusza40orc.clou
 - **CROPDMG:** this variables indicates the value of crop damage in the event
 - **CROPDMGEXP:** this variables indicates the exponent associated with the crop damage Value
 
-Since the other variables in the data set are not used in the entire analysis we can subset the data to contain only the variables we need. We will use the dplyr package previously loaded for this step. After we will group the activity by Event Type to so we can do the data analysis. Finally in this step we print the first rows of the subset and grouped data.
+Since the other variables in the data set are not used in the entire analysis we can subset the data to contain only the variables we need. We will use the dplyr package previously loaded for this step. We then print the first rows of the subset data.
 
 ```{r, echo=TRUE}
 stormdata <- select(stormdata, EVTYPE, FATALITIES, INJURIES, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP)
-stormdata <- group_by(stormdata, EVTYPE)
 stormdata
 ```
 
@@ -71,6 +74,7 @@ This subset of data is what we will use for the analysis. First we have to check
 events <- unique(stormdata$EVTYPE)
 events
 ```
+
 After inspecting the EVTYPE variable we must do some changes to the Variable so the analysis we will do is accurate.
 
 ```{r, echo=TRUE}
@@ -135,20 +139,28 @@ stormdata[grepl("DUST", stormdata$EVTYPE), ]$EVTYPE <- "DUST"
 ## Unite all Fog events
 stormdata[grepl("FOG", stormdata$EVTYPE), ]$EVTYPE <- "FOG"
 ```
-After my best effort to consolidate all event types into correctly spelled and into same types it was not possible to do a perfect job. But a great part of the events where reduces into one corresponding type. Now the next step in processing the data is to transform the Damage Variables into the correct units applying the Exponents from the DMGEXP Variable.
+
+After my best effort to consolidate all event types into correctly spelled and into same types it was not possible to do a perfect job. But a great part of the events where reduces into one corresponding type, this will be enough since we only are concerned with the most occurring type of events. The results are as followed:
+
+```{r, echo=TRUE}
+events <- unique(stormdata$EVTYPE)
+events
+```
+
+Now the next step in processing the data is to transform the Damage Variables into the correct units applying the Exponents from the DMGEXP Variable.
 
 We first print the unique values for this variable to see its content
 
 ```{r, echo=TRUE}
 ## Symbols for the Property Damage Variable
 propexpo <- unique(stormdata$PROPDMGEXP)
-expo
+propexpo
 ## Symbols for the Crop Damage Variable
 cropexpo <- unique(stormdata$CROPDMGEXP)
-expo
+cropexpo
 ```
 
-We can determine from the Storm Data set documentation that the conversions are as follows:
+We can determine from the documentation that the conversions are as follows:
 
 - +/-/? = 0
 - 1 = 1*10^1
@@ -200,3 +212,102 @@ stormdata$CROPDMGEXP <- as.numeric(stormdata$CROPDMGEXP)
 stormdata$CROPDMGEXP[is.na(stormdata$CROPDMGEXP)] = 0
 ```
 
+With the exponents transformed into values we can create new variables for the real Property and Crop Damage for each event. We will separate the data frame into two. One for the Public Health consequences analysis and another for the economic cost analysis.
+
+```{r, echo=TRUE}
+## Multiply the Damage Value by the exponent and divide by one million
+stormdata <- mutate(stormdata, PROPDMG * PROPDMGEXP / 1000000, CROPDMG * CROPDMGEXP / 1000000)
+## Eliminate the variables that are not longer needed
+stormdata <- select(stormdata, -(PROPDMG:CROPDMGEXP))
+names(stormdata) <- c("Event_Type", "Fatalities", "Injuries", "Property_Damage_in_Millions", "Crop_Damage_in_Millions")
+## Separate the data set into the two independent tables
+data.ph <- group_by(select(stormdata, Event_Type, Fatalities, Injuries), Event_Type)
+data.ec <- group_by(select(stormdata, Event_Type, Property_Damage_in_Millions, Crop_Damage_in_Millions), Event_Type)
+## We can remove the storm data that we will not longer use
+rm(stormdata)
+## We will add a total Variable for each of the tables
+data.ph <- mutate(data.ph, Total_Casualties=Fatalities+Injuries)
+data.ec <- mutate(data.ec, Total_Damage=Property_Damage_in_Millions+Crop_Damage_in_Millions)
+```
+
+With the data processed in the previous section we will produce various summary table to report the results in the next section and produce tables and figures.
+
+```{r, echo=TRUE}
+## Create Summary tables sum by event type
+ph.sum <- arrange(summarize(data.ph, Fatalities = sum(Fatalities), Injuries = sum(Injuries), Total_Casualties = sum(Total_Casualties)), desc(Total_Casualties))
+ec.sum <- arrange(summarize(data.ec, Property_Damage_in_Millions = sum(Property_Damage_in_Millions), Crop_Damage_in_Millions = sum(Crop_Damage_in_Millions), Total_Damage_in_Millions = sum(Total_Damage)), desc(Total_Damage_in_Millions))
+## Create Summary Table max per events
+ph.max <- arrange(summarize(data.ph, Max_Fatalities = max(Fatalities), Max_Injuries = max(Injuries), Max_Total_Casualties = max(Total_Casualties)), desc(Max_Total_Casualties))
+ec.max <- arrange(summarize(data.ec, Max_Property_Damage_in_Millions = max(Property_Damage_in_Millions), Max_Crop_Damage_in_Millions = max(Crop_Damage_in_Millions), Max_Total_Damage_in_Millions = max(Total_Damage)), desc(Max_Total_Damage_in_Millions))
+```
+
+
+## Results
+
+With the data we processed in the previous section we will report the results of the analysis.
+
+### Part 1 - Consequences of event types in the public health
+
+The results of the consequences of in public health by event type where calculated in the previous section. We will print the top events in a table to see the effect on Fatalities, Injuries and Total Casualties.
+
+```{r, echo=TRUE}
+## Print the Summatory Public Health Summary Table
+kable(ph.sum[1:20,])
+## Print the Max Public Health Summary Table
+kable(ph.max[1:20,])
+```
+
+Next we will print a plot with the summatory of Fatalities, Injuries and Total Casualties by the top ten event types.
+
+```{r Public_Health_Plot, echo=TRUE}
+## Select only the top ten Events to be plotted
+ph.sum.plot <- ph.sum[1:10,]
+ph.sum.plot <- melt(ph.sum.plot, id.vars = "Event_Type")
+## Create the plot
+plot1 <- ggplot(ph.sum.plot, aes(x = reorder(Event_Type, desc(value)), y = value, fill = variable, group = variable))
+plot1 <- plot1 + labs(title = "Casualties by Event Type Across the US", x = "Event Type", y = "Casualties")
+plot1 <- plot1 + geom_bar(position = "dodge",stat = "identity") + coord_flip()
+plot1
+```
+
+Plot 1. Bar Chart of Total Fatalities and Injuries by Event Type
+
+#### Interpreting Results in Public Health
+
+For the public health data there is a clear Event Type that causes the most casualties. This is the Tornado, it has causes a lot of injuries during the time span of the data collection and clearly it causes the most Deaths and Injuries. After the Tornado the next event is heat related, this involves high temperatures. Following are Thunderstorms, Floods and Lightning. The last event in the top ten are Hurricanes.
+
+Regarding public health when preparing for events tornado should be the top priority in fund relocation.But given it is the most unpredictable is the most difficult to prepare for.
+
+### Part 2 - Consequences of event types in the economy
+
+The results of the consequences in economic terms by event type where calculated in the previous section. We will print the top events in a table to see the effect on Property Damage, Crop Damage and Total Damage.
+
+```{r, echo=TRUE}
+## Print the Summatory Public Health Summary Table
+kable(ec.sum[1:20,])
+## Print the Max Public Health Summary Table
+kable(ec.max[1:20,])
+```
+
+Next we will print a plot with the summatory of Property, Crop and Total Damage by the top ten Event Types.
+
+```{r Economic_Plot, echo=TRUE}
+## Select only the top ten Events to be plotted
+ec.sum.plot <- ec.sum[1:10,]
+ec.sum.plot <- melt(ec.sum.plot, id.vars = "Event_Type")
+## Create the plot
+plot2 <- ggplot(ec.sum.plot, aes(x = reorder(Event_Type, desc(value)), y = value, fill = variable, group = variable))
+plot2 <- plot2 + labs(title = "Economic Damage by Event Type Across the US", x = "Event Type", y = "Damage in $ Millions")
+plot2 <- plot2 + geom_bar(position = "dodge",stat = "identity") + coord_flip()
+plot2
+```
+
+Plot 2. Bar Chart of Total Property and Crop Damages by Event Type
+
+#### Interpreting Results in Economic Damage
+
+Regarding economic consequences from weather events clearly the most damaging are floods. They affect both crops and Property. The biggest part of the damages done during events are always regarding properties. From the other events are the Hurricanes, Tornadoes, and Storm Surge. The least damaging in the list of top ten are Tropical Storms.
+
+### Final Results
+
+After analyzing both the results from Public Health and Economic Damage we can conclude that the most dangerous and damaging are Tornadoes it causes both casualties and economic damage. As we mentioned before is one of the most difficult events to prepare for but it definitely requires the most attention.
