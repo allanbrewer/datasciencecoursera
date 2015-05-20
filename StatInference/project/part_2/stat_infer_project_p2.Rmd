@@ -1,0 +1,78 @@
+---
+title: "Statistical Inference Project Part 2"
+author: "Allan R Brewer Cappellin"
+date: "May 19, 2015"
+output:
+  pdf_document:
+    latex_engine: xelatex
+subtitle: Analyzing the Tooth Growth Data set from R
+---
+
+## Introduction
+
+In this, the second part of the project, we will analyze the tooth growth data set from R. We will do a Exploratory Data Analysis of it, create a summary of the data, and do a hypothesis test to compare the means of two data sets in the data frame. This analysis will be done using the tools learned in the Statistical Inference Course from Coursera. And the main objective is to undestand the data and compare if there is a statistical significant diffenrence between the Supp and Dose Tooth Growth Data.
+
+---
+
+## Data Analysis and Summary
+
+In the first section we will create a couple of plots to do an exploratory data analysis and a figure of the summary of the data. 
+
+```{r Load_Packages, echo=FALSE}
+library(ggplot2)
+```
+
+### Exploratory Data Analysis
+
+
+```{r eda, echo=FALSE}
+data(ToothGrowth)
+x <- ToothGrowth; rm(ToothGrowth)
+```
+
+
+### Summary of the Data
+
+```{r summary, echo=FALSE}
+
+```
+
+### Hypothesis Test
+
+
+```{r hyp_test, echo=FALSE}
+
+```
+
+### Conclusions
+
+
+\newpage
+
+---
+
+## Appendix
+
+In this section we will show all the R code, figures and graphs that support the document and conclusions drawn in it.
+
+### R code
+
+In this first section of the appendix you can find all of the R code that is not shown in the main body of the document. 
+
+*R Code #1 : xxx R Code*
+
+```{r Appendix1, ref.label="", echo=TRUE, results='hide'}
+```
+
+*R Code #2 : xxx R Code*
+
+```{r Appendix2, ref.label="", echo=TRUE, eval=FALSE}
+```
+
+
+*R Code #3 : xxx R Code*
+
+```{r Appendix3, ref.label="", echo=TRUE, eval=FALSE}
+```
+
+---
