@@ -5,47 +5,78 @@ date: "May 19, 2015"
 output:
   pdf_document:
     latex_engine: xelatex
+    fig_width: 7
+    fig_height: 4
 subtitle: Analyzing the Tooth Growth Data set from R
+fontsize: 10pt
+geometry: margin = 1in
 ---
 
 ## Introduction
 
-In this, the second part of the project, we will analyze the tooth growth data set from R. We will do a Exploratory Data Analysis of it, create a summary of the data, and do a hypothesis test to compare the means of two data sets in the data frame. This analysis will be done using the tools learned in the Statistical Inference Course from Coursera. And the main objective is to undestand the data and compare if there is a statistical significant diffenrence between the Supp and Dose Tooth Growth Data.
+In this, the second part of the project, we will analyze the tooth growth data set from R. We will do a Exploratory Data Analysis of it, create a summary of the data, and do a hypothesis test to compare the means of two data sets in the data frame. This analysis will be done using the tools learned in the Statistical Inference Course from Coursera. And the main objective is to understand the data and compare if there is a statistical significant difference between the Supplement and Dose Tooth Growth Data.
 
 ---
 
 ## Data Analysis and Summary
 
-In the first section we will create a couple of plots to do an exploratory data analysis and a figure of the summary of the data. 
+In the first section we will create a plot to do an exploratory data analysis and a figure of the summary of the data. For this analysis we will load the packages ggplot2 and dplyr
 
-```{r Load_Packages, echo=FALSE}
+```{r Load_Packages, echo=FALSE, message=FALSE, error=FALSE, message=FALSE}
 library(ggplot2)
+library(dplyr)
 ```
 
-### Exploratory Data Analysis
+Our first steps in the Exploratory Data Analysis (EDA) will be to load the data sets into the R environment and transform into a table data frame to manipulate with dplyr, this R code can be seen in the Appendix as "Load Data R Code". Before we do anything we must understand were the data comes from. The length measurement comes from the odontoblast cells from the incisors of a population of 60 guinea pigs. The different measurer are done by Supplement type divided in Orange Juice and pure Vitamin C ingestion and the doses vary from 0.5, 1 and 2 milligrams per day, the experiment was done for 42 days.
 
-
-```{r eda, echo=FALSE}
+```{r Load_Data, echo=FALSE}
 data(ToothGrowth)
-x <- ToothGrowth; rm(ToothGrowth)
+x <- tbl_df(ToothGrowth); rm(ToothGrowth)
 ```
 
+To do a proper EDA we must print a summary and structure of the data to understand the the variables involved and their values. The R code for this section is under the appendix "Summary R Code"
 
-### Summary of the Data
-
-```{r summary, echo=FALSE}
-
+* Summary and Structure*
+```{r summary, echo=FALSE, results='markup'}
+str(x)
+summary(x)
 ```
 
-### Hypothesis Test
+From the information above we can see the data has 3 variables composed by length of the tooth in numbers, supplement type by two levels OJ and VC and dose amount in three levels 0.5, 1 and 2 milligrams per day. From the summary of the data we appreciate that there ate no missing values or NAs and that is well organized as a tidy data set. The data is divided in 30 observations for Oj and 30 for VC and in this sections there are ten for each dose. After this summary analysis of the data we can create a plot for a proper EDA and better understand the behavior of the variables. The following figure presents a box plot faceted by Dose and its R code is in the Appendix under "Box Plot R Code"
 
-
-```{r hyp_test, echo=FALSE}
-
+```{r plot1, echo=FALSE}
+plot1 <- ggplot(x, aes(x = supp, y = len, colour = factor(dose)))
+plot1 <- plot1 + labs(title = "Length by Supplement and Dose", x = "Supplement Type", y = "Length")
+plot1 <- plot1 + geom_boxplot() + scale_color_discrete(name = "Dose") + facet_grid(~dose)
+plot1
 ```
 
-### Conclusions
+From the Box Plot by Dose and Supplement we can make some assumptions about the data that we will test in the following section using a t test. First we can appreciate how the Length seems to get larger with the increase in dosage and that it appears for the 0.5 an 1 milligram that the Orange Juice has a better result in Teeth Growth than the pure Vitamin C. This Assumptions will be tested next.
 
+## Hypothesis Test
+
+For this section we will perform various Hypothesis test to understand if the difference in length between Supplement Type and Dose is statistically significant. We will perform 5 different Hypothesis Test using the T Test. The Test will be done with the following characterisitcs. Assume unequal variance, unpaired data and we will do a two sided test for two different variables to determine if the means difference is statistically significant. The R code for the test can be found in the appendix under "Hypothesis Test R Code"
+
+```{r hypo_test, echo=FALSE}
+oj05 <- filter(x, supp == "OJ", dose == 0.5)
+oj10 <- filter(x, supp == "OJ", dose == 1)
+oj20 <- filter(x, supp == "OJ", dose == 2)
+vc05 <- filter(x, supp == "VC", dose == 0.5)
+vc10 <- filter(x, supp == "VC", dose == 1)
+vc20 <- filter(x, supp == "VC", dose == 2)
+d05 <- filter(x, dose == 0.5)
+d10 <- filter(x, dose == 1)
+d20 <- filter(x, dose == 2)
+hypo1 <- t.test(oj05$len, vc05$len, paired=FALSE, var.equal=FALSE, alternative="two.sided")
+hypo2 <- t.test(oj10$len, vc10$len, paired=FALSE, var.equal=FALSE, alternative="two.sided")
+hypo3 <- t.test(oj20$len, vc20$len, paired=FALSE, var.equal=FALSE, alternative="two.sided")
+hypo4 <- t.test(d05$len, d10$len, paired=FALSE, var.equal=FALSE, alternative="two.sided")
+hypo5 <- t.test(d10$len, d20$len, paired=FALSE, var.equal=FALSE, alternative="two.sided")
+```
+
+## Conclusions
+
+For this test we made some assumptions, first there are 60 guinea pigs that has no connection between one and other. The t test were done as a 2 sample test that have unequal variance, since when one has no idea if variance is equal or not it is recommended to do it as unequal. The next assumption is that the tests are done as 2 tailed since the hypothesis is in every case to determine if the means are equal or not.
 
 \newpage
 
@@ -59,20 +90,56 @@ In this section we will show all the R code, figures and graphs that support the
 
 In this first section of the appendix you can find all of the R code that is not shown in the main body of the document. 
 
-*R Code #1 : xxx R Code*
+*R Code #1 : Load Data R Code*
 
-```{r Appendix1, ref.label="", echo=TRUE, results='hide'}
+```{r Appendix1, ref.label="Load_Data", echo=TRUE, eval=FALSE}
 ```
 
-*R Code #2 : xxx R Code*
+*R Code #2 : Summary R Code*
 
-```{r Appendix2, ref.label="", echo=TRUE, eval=FALSE}
+```{r Appendix2, ref.label="summary", echo=TRUE, eval=FALSE}
 ```
 
+*R Code #3 : Box Plot R Code*
 
-*R Code #3 : xxx R Code*
+```{r Appendix3, ref.label="plot1", echo=TRUE, eval=FALSE}
+```
 
-```{r Appendix3, ref.label="", echo=TRUE, eval=FALSE}
+*R Code #4 : Hypothesis Test R Code*
+
+```{r Appendix4, ref.label="hypo_test", echo=TRUE, eval=FALSE}
+```
+
+### Results
+
+*Result for Hypothesis Test 1 : Compare OJ vs VC for 0.5 mg/d*
+
+```{r Appendix5, echo=FALSE}
+hypo1
+```
+
+*Result for Hypothesis Test 2 : Compare OJ vs VC for 1.0 mg/d*
+
+```{r Appendix6, echo=FALSE}
+hypo2
+```
+
+*Result for Hypothesis Test 3 : Compare OJ vs VC for 2.0 mg/d*
+
+```{r Appendix7, echo=FALSE}
+hypo3
+```
+
+*Result for Hypothesis Test 4 : Compare 0.5 mg/d vs 1.0 mg/d for all Supp Types*
+
+```{r Appendix8, echo=FALSE}
+hypo4
+```
+
+*Result for Hypothesis Test 5 : Compare 1.0 mg/d vs 2.0 mg/d for all Supp Types*
+
+```{r Appendix9, echo=FALSE}
+hypo5
 ```
 
 ---
