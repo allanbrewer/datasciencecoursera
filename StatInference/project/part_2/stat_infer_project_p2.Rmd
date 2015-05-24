@@ -9,12 +9,14 @@ output:
     fig_height: 4
 subtitle: Analyzing the Tooth Growth Data set from R
 fontsize: 10pt
-geometry: margin = 1in
+geometry: margin = 0.75in
 ---
 
 ## Introduction
 
 In this, the second part of the project, we will analyze the tooth growth data set from R. We will do a Exploratory Data Analysis of it, create a summary of the data, and do a hypothesis test to compare the means of two data sets in the data frame. This analysis will be done using the tools learned in the Statistical Inference Course from Coursera. And the main objective is to understand the data and compare if there is a statistical significant difference between the Supplement and Dose Tooth Growth Data.
+
+After doing the hypothesis tests we can determine that for 0.5 and 1 milligram per day has a greater effect on tooth length and for 2 milligrams it appers to that the mean stays equal. The other tests prove that the difference in lenght achived by a greater dose achives greater tooth growth is statisticaly significant.
 
 ---
 
@@ -74,9 +76,23 @@ hypo4 <- t.test(d05$len, d10$len, paired=FALSE, var.equal=FALSE, alternative="tw
 hypo5 <- t.test(d10$len, d20$len, paired=FALSE, var.equal=FALSE, alternative="two.sided")
 ```
 
+### Results
+
+**Hypothesis Test 1**
+
+* $H_{0}$ : The difference in mean between OJ and VC in 0.5 milligram per day dose is equal to 0.  
+* $H_{1}$ : The difference in mean between OJ and VC in 0.5 milligram per day dose is different to 0.  
+* P-Value:  
+```{r hypo1_conf, echo=FALSE}
+hypo1$p.value
+```
+* Result: With the P-value reported above we reject the null hypothesis and say that the difference in mean different to 0 is statistically significant.
+
 ## Conclusions
 
 For this test we made some assumptions, first there are 60 guinea pigs that has no connection between one and other. The t test were done as a 2 sample test that have unequal variance, since when one has no idea if variance is equal or not it is recommended to do it as unequal. The next assumption is that the tests are done as 2 tailed since the hypothesis is in every case to determine if the means are equal or not.
+
+From the T Test and Hypothesis tests done with the above assumptions we can determine that the greater the dose the greater the tooth length and that for 0.5 and 1 milligram per day the OJ has a greater effect in tooth length than VC, for 2 milligrams per day the effect of OJ and VC seem to be equal on tooth growth.
 
 \newpage
 

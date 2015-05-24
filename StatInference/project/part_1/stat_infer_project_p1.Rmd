@@ -5,7 +5,11 @@ date: "May 19, 2015"
 output:
   pdf_document:
     latex_engine: xelatex
+    fig_width: 7
+    fig_height: 4
 subtitle: Simulating an Exponential Distribution and comparing it with the CLT
+fontsize: 10pt
+geometry: margin = 0.75in
 ---
 
 ## Introduction
@@ -71,7 +75,7 @@ After comparing the sample mean and variance with the theoretical values we will
 
 The first logical step to the comparison is to create a histogram and density plot of the 1,000 sample means to take a look of its distribution. The R code for the plot can be found in the appendix, the R code is under the name Histogram and Density Code.
 
-```{r hist_dist, echo=FALSE, fig.height=4}
+```{r hist_dist, echo=FALSE}
 simmeans <- as.data.frame(simmeans)
 names(simmeans) <- "mean"
 plot1 <- ggplot(simmeans, aes(x=mean)) + geom_histogram(aes(y=..density..), binwidth = 0.20, colour = "black", fill = "steelblue")
@@ -84,7 +88,7 @@ From this plot we can see that the distribution of the sample means approximates
 
 After creating the density and histogram we will create a plot for testing the normality of the distribution. This plots are called qqnorm and qqline. We will compare the values of our distribution to that of a normal distribution. When this values coincide with the line printed in the graph then we can say that the sample distribution is approximately normal. This R code can be found in the appendix.
 
-```{r qqnorm_plot, echo=FALSE, fig.height=4}
+```{r qqnorm_plot, echo=FALSE}
 qqnorm(simmeans$mean)
 qqline(simmeans$mean)
 ```
