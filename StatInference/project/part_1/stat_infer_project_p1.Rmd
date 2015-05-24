@@ -30,7 +30,7 @@ library(ggplot2)
 
 The first part of the project is to simulate the 1,000 exponential. The code for the simulation can be found in the appendix of this document under the name Simulation R Code. This simulation will be done by first setting a seed and then a for loop from 1 to 1,000 for random exponentials of size 40.
 
-The results of this simulation will be a vector of length 10,000 that has a mean and a variance to be compared with the theoretical.
+The results of this simulation will be a vector of length 1,000 that has a mean and a variance to be compared with the theoretical.
 
 ```{r Simulation, echo=FALSE}
 ## Set a variable with the number of simulations
@@ -71,7 +71,7 @@ In this comparison we can see that the sample variance approximates very closely
 
 ### Show that the distribution is approximately normal
 
-After comparing the sample mean and variance with the theoretical values we will compare the sample distribution with a normal distribution to determine if the CLT predicts the distribution of the 10,000 samples.
+After comparing the sample mean and variance with the theoretical values we will compare the sample distribution with a normal distribution to determine if the CLT predicts the distribution of the 1,000 samples.
 
 The first logical step to the comparison is to create a histogram and density plot of the 1,000 sample means to take a look of its distribution. The R code for the plot can be found in the appendix, the R code is under the name Histogram and Density Code.
 

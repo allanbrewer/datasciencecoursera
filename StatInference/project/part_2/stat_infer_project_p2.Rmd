@@ -14,9 +14,7 @@ geometry: margin = 0.75in
 
 ## Introduction
 
-In this, the second part of the project, we will analyze the tooth growth data set from R. We will do a Exploratory Data Analysis of it, create a summary of the data, and do a hypothesis test to compare the means of two data sets in the data frame. This analysis will be done using the tools learned in the Statistical Inference Course from Coursera. And the main objective is to understand the data and compare if there is a statistical significant difference between the Supplement and Dose Tooth Growth Data.
-
-After doing the hypothesis tests we can determine that for 0.5 and 1 milligram per day has a greater effect on tooth length and for 2 milligrams it appers to that the mean stays equal. The other tests prove that the difference in lenght achived by a greater dose achives greater tooth growth is statisticaly significant.
+In this, the second part of the project, we will analyze the tooth growth data set from R. We will do a Exploratory Data Analysis of it, create a summary of the data, and do a hypothesis test to compare the means of two data sets in the data frame. This analysis will be done using the tools learned in the Statistical Inference Course from Coursera. And the main objective is to understand the data and compare if there is a statistical significant difference between the Supplement and Dose Tooth Growth Data. The test indicates that OJ has greater results than VC and that a bigger dose produces bigger teeth.
 
 ---
 
@@ -46,7 +44,7 @@ summary(x)
 
 From the information above we can see the data has 3 variables composed by length of the tooth in numbers, supplement type by two levels OJ and VC and dose amount in three levels 0.5, 1 and 2 milligrams per day. From the summary of the data we appreciate that there ate no missing values or NAs and that is well organized as a tidy data set. The data is divided in 30 observations for Oj and 30 for VC and in this sections there are ten for each dose. After this summary analysis of the data we can create a plot for a proper EDA and better understand the behavior of the variables. The following figure presents a box plot faceted by Dose and its R code is in the Appendix under "Box Plot R Code"
 
-```{r plot1, echo=FALSE}
+```{r plot1, echo=FALSE, fig.align='center'}
 plot1 <- ggplot(x, aes(x = supp, y = len, colour = factor(dose)))
 plot1 <- plot1 + labs(title = "Length by Supplement and Dose", x = "Supplement Type", y = "Length")
 plot1 <- plot1 + geom_boxplot() + scale_color_discrete(name = "Dose") + facet_grid(~dose)
@@ -57,7 +55,7 @@ From the Box Plot by Dose and Supplement we can make some assumptions about the 
 
 ## Hypothesis Test
 
-For this section we will perform various Hypothesis test to understand if the difference in length between Supplement Type and Dose is statistically significant. We will perform 5 different Hypothesis Test using the T Test. The Test will be done with the following characterisitcs. Assume unequal variance, unpaired data and we will do a two sided test for two different variables to determine if the means difference is statistically significant. The R code for the test can be found in the appendix under "Hypothesis Test R Code"
+For this section we will perform various Hypothesis test to understand if the difference in length between Supplement Type and Dose is statistically significant. We will perform 5 different Hypothesis Test using the T Test. The Test will be done with the following characteristics. Assume unequal variance, unpaired data and we will do a two sided test for two different variables to determine if the means difference is statistically significant. The R code for the test can be found in the appendix under "Hypothesis Test R Code" and the complete output in the Results Section in the Appendix.
 
 ```{r hypo_test, echo=FALSE}
 oj05 <- filter(x, supp == "OJ", dose == 0.5)
@@ -75,24 +73,68 @@ hypo3 <- t.test(oj20$len, vc20$len, paired=FALSE, var.equal=FALSE, alternative="
 hypo4 <- t.test(d05$len, d10$len, paired=FALSE, var.equal=FALSE, alternative="two.sided")
 hypo5 <- t.test(d10$len, d20$len, paired=FALSE, var.equal=FALSE, alternative="two.sided")
 ```
+### Tests and Results
 
-### Results
+Next the Hypothesis tests and the p value to accept or reject the null hypothesis.
 
 **Hypothesis Test 1**
 
 * $H_{0}$ : The difference in mean between OJ and VC in 0.5 milligram per day dose is equal to 0.  
 * $H_{1}$ : The difference in mean between OJ and VC in 0.5 milligram per day dose is different to 0.  
-* P-Value:  
-```{r hypo1_conf, echo=FALSE}
+* P-Value:
+
+```{r hypo1_pvalue, echo=FALSE}
 hypo1$p.value
 ```
-* Result: With the P-value reported above we reject the null hypothesis and say that the difference in mean different to 0 is statistically significant.
+* Result: With the P-value reported above we can reject the null hypothesis and can say that the difference in mean different to 0 is statistically significant.
+
+**Hypothesis Test 2**
+
+* $H_{0}$ : The difference in mean between OJ and VC in 1.0 milligram per day dose is equal to 0.  
+* $H_{1}$ : The difference in mean between OJ and VC in 1.0 milligram per day dose is different to 0.  
+* P-Value:
+
+```{r hypo2_pvalue, echo=FALSE}
+hypo2$p.value
+```
+* Result: With the P-value reported above we can reject the null hypothesis and can say that the difference in mean different to 0 is statistically significant.
+
+**Hypothesis Test 3**
+
+* $H_{0}$ : The difference in mean between OJ and VC in 2.0 milligram per day dose is equal to 0.  
+* $H_{1}$ : The difference in mean between OJ and VC in 2.0 milligram per day dose is different to 0.  
+* P-Value:
+
+```{r hypo3_pvalue, echo=FALSE}
+hypo3$p.value
+```
+* Result: With the P-value reported above we can not reject the null hypothesis and can not say that the difference in mean different to 0 is statistically significant.
+
+**Hypothesis Test 4**
+
+* $H_{0}$ : The difference in mean between dose of in 0.5 and 1.0 milligram per day is equal to 0.
+* $H_{1}$ : The difference in mean between dose of in 0.5 and 1.0 milligram per day is different to 0.
+* P-Value:
+
+```{r hypo4_pvale, echo=FALSE}
+hypo4$p.value
+```
+* Result: With the P-value reported above we can reject the null hypothesis and can say that the difference in mean different to 0 is statistically significant.
+
+**Hypothesis Test 5**
+
+* $H_{0}$ : The difference in mean between dose of in 1.0 and 2.0 milligram per day is equal to 0.
+* $H_{1}$ : The difference in mean between dose of in 1.0 and 2.0 milligram per day is different to 0.
+* P-Value:
+
+```{r hypo5_pvalue, echo=FALSE}
+hypo5$p.value
+```
+* Result: With the P-value reported above we can reject the null hypothesis and can say that the difference in mean different to 0 is statistically significant.
 
 ## Conclusions
 
-For this test we made some assumptions, first there are 60 guinea pigs that has no connection between one and other. The t test were done as a 2 sample test that have unequal variance, since when one has no idea if variance is equal or not it is recommended to do it as unequal. The next assumption is that the tests are done as 2 tailed since the hypothesis is in every case to determine if the means are equal or not.
-
-From the T Test and Hypothesis tests done with the above assumptions we can determine that the greater the dose the greater the tooth length and that for 0.5 and 1 milligram per day the OJ has a greater effect in tooth length than VC, for 2 milligrams per day the effect of OJ and VC seem to be equal on tooth growth.
+For this test we made some assumptions, first there are 60 guinea pigs that has no connection between one and other. The t test were done as a 2 sample test that have unequal variance, since when one has no idea if variance is equal or not it is recommended to do it as unequal. The next assumption is that the tests are done as 2 tailed since the hypothesis is in every case to determine if the means are equal or not. From the T Test and Hypothesis tests done with the stated assumptions we can determine that the greater the dose the greater the tooth length and that for 0.5 and 1 milligram per day the OJ has a greater effect in tooth length than VC, for 2 milligrams per day the effect of OJ and VC seem to be equal on tooth growth.
 
 \newpage
 
