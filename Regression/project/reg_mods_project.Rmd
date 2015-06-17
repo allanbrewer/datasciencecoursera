@@ -33,39 +33,28 @@ data(mtcars)
 x <- tbl_df(mtcars); rm(mtcars)
 ```
 
+The first thing we will do is create a summary of the data and a basic graph to undestand the variables and their relationship.
 
-* Summary and Structure*
+*Summary and Structure*
 ```{r summary, echo=FALSE, results='markup'}
 str(x)
 summary(x)
 ```
 
+With the summary and structure information in mind we will create a pairwise plot of all the varaibles to undestand their relationship.
 
 ```{r plot1, echo=FALSE, fig.align='center'}
-plot1 <- ggplot(x, aes(x = supp, y = len, colour = factor(dose)))
-plot1 <- plot1 + labs(title = "Length by Supplement and Dose", x = "Supplement Type", y = "Length")
-plot1 <- plot1 + geom_boxplot() + scale_color_discrete(name = "Dose") + facet_grid(~dose)
+plot1 <- ggpairs(x, lower = list(continuous = "smooth"),params = c(method = "loess"))
 plot1
 ```
 
-## Hypothesis Test
+## Linear Models
 
+We will create a copuple of linear models to start with the analysis. The first one is the model with `mpg` as the outcome and the rest of the variables as the predictors. We are specilly interesten in the effect of the transmission type on the MPG so a second model adjusted with just the `am` varaibles will be fitted.
 
-```{r hypo_test, echo=FALSE}
-oj05 <- filter(x, supp == "OJ", dose == 0.5)
-oj10 <- filter(x, supp == "OJ", dose == 1)
-oj20 <- filter(x, supp == "OJ", dose == 2)
-vc05 <- filter(x, supp == "VC", dose == 0.5)
-vc10 <- filter(x, supp == "VC", dose == 1)
-vc20 <- filter(x, supp == "VC", dose == 2)
-d05 <- filter(x, dose == 0.5)
-d10 <- filter(x, dose == 1)
-d20 <- filter(x, dose == 2)
-hypo1 <- t.test(oj05$len, vc05$len, paired=FALSE, var.equal=FALSE, alternative="two.sided")
-hypo2 <- t.test(oj10$len, vc10$len, paired=FALSE, var.equal=FALSE, alternative="two.sided")
-hypo3 <- t.test(oj20$len, vc20$len, paired=FALSE, var.equal=FALSE, alternative="two.sided")
-hypo4 <- t.test(d05$len, d10$len, paired=FALSE, var.equal=FALSE, alternative="two.sided")
-hypo5 <- t.test(d10$len, d20$len, paired=FALSE, var.equal=FALSE, alternative="two.sided")
+```{r models, echo=FALSE}
+model_all <- lm(mpg ~ . , data = x)
+model_am <- lm(mpg ~ am, data = x)
 ```
 ### Tests and Results
 
@@ -82,20 +71,9 @@ hypo1$p.value
 ```
 * Result: With the P-value reported above we can reject the null hypothesis and can say that the difference in mean different to 0 is statistically significant.
 
-**Hypothesis Test 2**
-
-* $H_{0}$ : The difference in mean between OJ and VC in 1.0 milligram per day dose is equal to 0.  
-* $H_{1}$ : The difference in mean between OJ and VC in 1.0 milligram per day dose is different to 0.  
-* P-Value:
-
-```{r hypo2_pvalue, echo=FALSE}
-hypo2$p.value
-```
-* Result: With the P-value reported above we can reject the null hypothesis and can say that the difference in mean different to 0 is statistically significant.
-
-
 ## Conclusions
 
+In this project a multiple regression was conducted to examine the predictors of mpg in cars. Ten predictors were simultaneously entered into the model: Number of Cylinders, Displacement, HP, Rear Axle Ratio, Weigth, Quater Mile Time, V/S, Transmission Type, Forward Gears and Carburetors. Together they accounted for xxx of the variance in MPG. Of all the variables xxx, xxx, and xxx were significant predictors of MPG. XXX ($ Beta = xxx $) and XXX were the strongest predictors and (Negatively or Positively) associated with MPG, whereas XXX were (Negativly or Positively) associeted with the outcome.
 
 \newpage
 
