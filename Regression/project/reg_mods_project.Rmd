@@ -1,7 +1,7 @@
 ---
 title: "Regression Models Project"
 author: "Allan R Brewer Cappellin"
-date: "June 15, 2015"
+date: "June 19, 2015"
 output:
   pdf_document:
     latex_engine: xelatex
@@ -14,7 +14,7 @@ geometry: margin = 0.75in
 
 ## Executive Summary
 
-In this project we will analyze the `mtcars` data set from R. We will do a Exploratory Data Analysis of it, fit various models to explain the interaction between variables, respond to the questions of weather Manual or Automatic transmission is better for MPG and quantify the difference and do residual and uncertainty plots and analysis. This analysis will be done using the tools learned in the Regression Models Course from Coursera. 
+In this project we will analyze the `mtcars` data set from R. We will do a Exploratory Data Analysis of it, fit various models to explain the interaction between variables, respond to the questions of weather Manual or Automatic transmission is better for MPG, quantify the difference and do residual and uncertainty plots and analysis. This analysis will be done using the tools learned in the Regression Models Course from Coursera. 
 
 ---
 
@@ -25,55 +25,64 @@ In the first section we will create a plot to do an exploratory data analysis an
 ```{r Load_Packages, echo=FALSE, message=FALSE, error=FALSE, message=FALSE}
 library(ggplot2)
 library(dplyr)
+library(GGally)
 ```
-
 
 ```{r Load_Data, echo=FALSE}
 data(mtcars)
 x <- tbl_df(mtcars); rm(mtcars)
 ```
 
-The first thing we will do is create a summary of the data and a basic graph to undestand the variables and their relationship.
+The first thing we will do is create a summary of the data and a basic graph to undestand the variables and their relationship. For now we will transform only the transmission variable into a factor.
 
 *Summary and Structure*
 ```{r summary, echo=FALSE, results='markup'}
+x$am <- as.factor(x$am)
 str(x)
 summary(x)
 ```
 
-With the summary and structure information in mind we will create a pairwise plot of all the varaibles to undestand their relationship.
+With the summary and structure information in mind we will create a pairwise plot of all the varaibles to undestand their relationship. With the information of the scaterplots and correlation between varibles we will determine the ones that should be incorporated to the model.
 
 ```{r plot1, echo=FALSE, fig.align='center'}
-plot1 <- ggpairs(x, lower = list(continuous = "smooth"),params = c(method = "loess"))
+plot1 <- ggpairs(x, colour = "am")
 plot1
 ```
 
+From the correlations and scaterplots we can define the variables to incorporate in our models. Each variable added to a model will be tested to determine their significance in the outcome via an ANOVA. The following conclusions are drawn from the plot: Since `Number of Cylinder`, `Displacemente` and `HP` are so highly correlated between them we will only include `No of Cylidenrs` which has the hieght correlation to `MPG`, `Drat` will be included since it has a relative high correlation with `MPG` and low correlation with the rest of the variables, the same goes for `Weight`, `Qsec` and `VS` will not be incorporated since we consider they do not have much correlation with `MPG`, `AM` will obviously be included since it is the variable in question and `Number of Gears` and `Carburators` will not be incorporated since they do not correlate as much with the outcome variable in question.
+
 ## Linear Models
 
-We will create a copuple of linear models to start with the analysis. The first one is the model with `mpg` as the outcome and the rest of the variables as the predictors. We are specilly interesten in the effect of the transmission type on the MPG so a second model adjusted with just the `am` varaibles will be fitted.
+We will create a few linear models and do an ANOVA to determine the variables to incorporate in the final model. The first one is the model with `mpg` as the outcome and the variable in question, `am`, as the predcitor. After this we will incorporate the varibales mentioned above and determine which are to be present in the final model using the ANOVA. The variables Number of Cylinders will be kept as a numeric variable since it can take other values outside from the ones on the data set.
 
 ```{r models, echo=FALSE}
-model_all <- lm(mpg ~ . , data = x)
-model_am <- lm(mpg ~ am, data = x)
+model_am <- lm(mpg ~ am , data = x)
+model2 <- lm(mpg ~ am + cyl, data = x)
+model3 <- lm(mpg ~ am + cyl + wt, data = x)
+model4 <- lm(mpg ~ am + cyl + drat, data = x)
+model5 <- lm(mpg ~ am + cyl + wt + drat, data = x)
 ```
-### Tests and Results
+### Analysis of Variance between models
 
-Next the Hypothesis tests and the p value to accept or reject the null hypothesis.
+Now we will compare the analysis of variance between the models and determine which will be the varaibles that should be present in the final model.
 
-**Hypothesis Test 1**
+**ANOVA**
 
-* $H_{0}$ : The difference in mean between OJ and VC in 0.5 milligram per day dose is equal to 0.  
-* $H_{1}$ : The difference in mean between OJ and VC in 0.5 milligram per day dose is different to 0.  
-* P-Value:
+The analysis of variance will determine if tha incorporation of variables between models ir significant in determining the outcome variable, in this case `MPG`.
 
-```{r hypo1_pvalue, echo=FALSE}
-hypo1$p.value
+```{r anovas, echo=FALSE}
+anova(model_am, model2, model3)
+anova(model_am, model2, model4)
+anova(model_am, model2, model3, model5)
 ```
-* Result: With the P-value reported above we can reject the null hypothesis and can say that the difference in mean different to 0 is statistically significant.
+
+* Result: Using the P-Values reported in the ANOVAs and a 5% significance we can determine that including xxx, xxx and xxx is statisticaly significant in determining the outcome variable. The final model which will be analyzed is:
 
 ## Conclusions
 
-In this project a multiple regression was conducted to examine the predictors of mpg in cars. Ten predictors were simultaneously entered into the model: Number of Cylinders, Displacement, HP, Rear Axle Ratio, Weigth, Quater Mile Time, V/S, Transmission Type, Forward Gears and Carburetors. Together they accounted for xxx of the variance in MPG. Of all the variables xxx, xxx, and xxx were significant predictors of MPG. XXX ($ Beta = xxx $) and XXX were the strongest predictors and (Negatively or Positively) associated with MPG, whereas XXX were (Negativly or Positively) associeted with the outcome.
+In this project a multiple regression was conducted to examine the predictors of mpg in cars. Multiple variables were incorporated into different models and compared to determine the correct one.
+
+The final model has XXX predictors: Number of Cylinders, Displacement, HP, Rear Axle Ratio, Weigth, Quater Mile Time, V/S, Transmission Type, Forward Gears and Carburetors. Together they accounted for xxx of the variance in MPG. Of all the variables xxx, xxx, and xxx were significant predictors of MPG. XXX ($ Beta = xxx $) and XXX were the strongest predictors and (Negatively or Positively) associated with MPG, whereas XXX were (Negativly or Positively) associeted with the outcome.
 
 \newpage
 
@@ -113,30 +122,6 @@ In this first section of the appendix you can find all of the R code that is not
 
 ```{r Appendix5, echo=FALSE}
 hypo1
-```
-
-*Result for Hypothesis Test 2 : Compare OJ vs VC for 1.0 mg/d*
-
-```{r Appendix6, echo=FALSE}
-hypo2
-```
-
-*Result for Hypothesis Test 3 : Compare OJ vs VC for 2.0 mg/d*
-
-```{r Appendix7, echo=FALSE}
-hypo3
-```
-
-*Result for Hypothesis Test 4 : Compare 0.5 mg/d vs 1.0 mg/d for all Supp Types*
-
-```{r Appendix8, echo=FALSE}
-hypo4
-```
-
-*Result for Hypothesis Test 5 : Compare 1.0 mg/d vs 2.0 mg/d for all Supp Types*
-
-```{r Appendix9, echo=FALSE}
-hypo5
 ```
 
 ---
