@@ -5,94 +5,89 @@ date: "June 19, 2015"
 output:
   pdf_document:
     latex_engine: xelatex
-    fig_width: 7
+    fig_width: 6
     fig_height: 4
-subtitle: Analyzing the relationship between variables in the `mtcars` data set from R.
-fontsize: 10pt
+subtitle: Analyzing the relationship between variables in the **mtcars** data set from R.
+fontsize: 9pt
 geometry: margin = 0.75in
 ---
 
 ## Executive Summary
 
-In this project we will analyze the `mtcars` data set from R. We will do a Exploratory Data Analysis of it, fit various models to explain the interaction between variables, respond to the questions of weather Manual or Automatic transmission is better for MPG, quantify the difference and do residual and uncertainty plots and analysis. This analysis will be done using the tools learned in the Regression Models Course from Coursera. 
+In this project we will analyze the **mtcars** data set from R. We will do a Exploratory Data Analysis of it, fit various models to explain the interaction between variables, respond to the questions of weather Manual or Automatic transmission is better for MPG, quantify the difference and do residual and uncertainty plots and analysis. This analysis will be done using the tools learned in the Regression Models Course from Coursera.
+
+From the liner regression fitted and tested in this project we can say that transmission type is not associated significantly with MPG ($\alpha = 0.05$) and for this reason it can not be said if manual or automatism has an effect on MPG. The variable was considered as a factor with two other predictor which were significant and with a coefficient different than zero at a 5% significance.
 
 ---
 
-## Data Analysis and Summary
-
-In the first section we will create a plot to do an exploratory data analysis and a figure of the summary of the data. For this analysis we will load the packages ggplot2 and dplyr
-
-```{r Load_Packages, echo=FALSE, message=FALSE, error=FALSE, message=FALSE}
-library(ggplot2)
-library(dplyr)
-library(GGally)
-```
+## Exploratory Data Analysis and Summary
 
 ```{r Load_Data, echo=FALSE}
 data(mtcars)
-x <- tbl_df(mtcars); rm(mtcars)
+x <- mtcars; rm(mtcars)
 ```
 
-The first thing we will do is create a summary of the data and a basic graph to undestand the variables and their relationship. For now we will transform only the transmission variable into a factor.
-
-*Summary and Structure*
-```{r summary, echo=FALSE, results='markup'}
-x$am <- as.factor(x$am)
-str(x)
-summary(x)
+```{r Summary, echo=FALSE, results='markup'}
+xsum <- summary(x)
 ```
 
-With the summary and structure information in mind we will create a pairwise plot of all the varaibles to undestand their relationship. With the information of the scaterplots and correlation between varibles we will determine the ones that should be incorporated to the model.
+With the summary information in the Appendix #2 we will create a correlation matrix of all the variables to understand their relationship, the correlation matrix can be seen in the same appendix section. We will use this information to determine the ones that should be incorporated to the model.
 
-```{r plot1, echo=FALSE, fig.align='center'}
-plot1 <- ggpairs(x, colour = "am")
-plot1
+```{r correlation_matrix, echo=FALSE}
+xcor <- cor(x)
 ```
 
-From the correlations and scaterplots we can define the variables to incorporate in our models. Each variable added to a model will be tested to determine their significance in the outcome via an ANOVA. The following conclusions are drawn from the plot: Since `Number of Cylinder`, `Displacemente` and `HP` are so highly correlated between them we will only include `No of Cylidenrs` which has the hieght correlation to `MPG`, `Drat` will be included since it has a relative high correlation with `MPG` and low correlation with the rest of the variables, the same goes for `Weight`, `Qsec` and `VS` will not be incorporated since we consider they do not have much correlation with `MPG`, `AM` will obviously be included since it is the variable in question and `Number of Gears` and `Carburators` will not be incorporated since they do not correlate as much with the outcome variable in question.
+From the correlations matrix we can define the variables to incorporate in our models. Each variable added to a model will be tested to determine their significance in the outcome via an ANOVA. The following conclusions are drawn from the plot: Since **Number of Cylinder**, **Displacement** and **HP** are so highly correlated between them we will only include **No of Cylinders** which has the highest correlation to **MPG**, **Drat** will be included since it has a relative high correlation with **MPG** and low correlation with the rest of the variables, **Weight**, **Qsec** and **VS** will not be incorporated since we consider they do not have much correlation with **MPG**, **AM** will obviously be included since it is the variable in question and **Number of Gears** and **Carburetors** will not be incorporated since they do not correlate as much with the outcome variable in question. Even though leaving uncorrelated variables out of the model can bias the results of the coefficients we will proceed with this approach since the work needed to study every possible model and their results is to time consuming and unnecessary for this project.
 
 ## Linear Models
 
-We will create a few linear models and do an ANOVA to determine the variables to incorporate in the final model. The first one is the model with `mpg` as the outcome and the variable in question, `am`, as the predcitor. After this we will incorporate the varibales mentioned above and determine which are to be present in the final model using the ANOVA. The variables Number of Cylinders will be kept as a numeric variable since it can take other values outside from the ones on the data set.
+We will create a few linear models and do an ANOVA to determine the variables to incorporate in the final model. The first one is the model with **mpg** as the outcome and the variable in question, **am**, as the predictor. After this we will incorporate the variables mentioned above and determine which are to be present in the final model using the ANOVA. The variables **Number of Cylinders** will be kept as a numeric variable since it can take other values outside from the ones on the data set.
 
 ```{r models, echo=FALSE}
+x$am <- as.factor(x$am)
 model_am <- lm(mpg ~ am , data = x)
 model2 <- lm(mpg ~ am + cyl, data = x)
 model3 <- lm(mpg ~ am + cyl + wt, data = x)
 model4 <- lm(mpg ~ am + cyl + drat, data = x)
 model5 <- lm(mpg ~ am + cyl + wt + drat, data = x)
 ```
+
 ### Analysis of Variance between models
 
-Now we will compare the analysis of variance between the models and determine which will be the varaibles that should be present in the final model.
-
-**ANOVA**
-
-The analysis of variance will determine if tha incorporation of variables between models ir significant in determining the outcome variable, in this case `MPG`.
+Now we will compare the analysis of variance between the models and determine which will be the variables that should be present in the final model. This analysis will determine if the incorporation of variables between models is significant in determining the outcome variable, in this case **MPG**.
 
 ```{r anovas, echo=FALSE}
-anova(model_am, model2, model3)
-anova(model_am, model2, model4)
-anova(model_am, model2, model3, model5)
+anova1 <- anova(model_am, model2, model3)
+anova2 <- anova(model_am, model2, model4)
+anova3 <- anova(model_am, model2, model3, model5)
 ```
 
-* Result: Using the P-Values reported in the ANOVAs and a 5% significance we can determine that including xxx, xxx and xxx is statisticaly significant in determining the outcome variable. The final model which will be analyzed is:
+Using the P-Values reported in the appendix under ANOVAs and a 5% significance we can determine that including **am**, **cyl** and **wt** is statistically significant but including the variable **drat** is not correct. The final model which will be analyzed is: **lm(mpg ~ am + cyl + wt)**
+
+### Final Model
+
+From the information retrieved in the ANOVAs we can now analyze the information in the final linear model. This model is formed by the dependent variable **mpg** and the independent variables **am**, **cyl** and **wt**. The result of the linear models, the coefficients are shown in the following figure.
+
+```{r model_summary, echo=FALSE}
+model3
+```
+
+The coefficients for the model selected are considered different to zero with a 5% significance for the **cyl** and **wt** variables, this information can be seen in the Appendix #3. In the case of the **am** variable the null hypothesis can not be rejected with the same significance value of 5% and so the coefficient is to be considered equal to zero. With this in mind we can say that transmission type does not have an effect on MPG in the cars of the data set.
+
+```{r residual_plot, echo=FALSE, fig.align='center'}
+par(mfrow=c(2,2))
+plot2 <- plot(model3)
+```
+
+Finally from this plots we can conclude that the regression model complies with the assumption that that the residual follow a random Normal Distribution with mean zero and that there are no outliers that produce any kind of variation inflation or leverage.
 
 ## Conclusions
 
-In this project a multiple regression was conducted to examine the predictors of mpg in cars. Multiple variables were incorporated into different models and compared to determine the correct one.
-
-The final model has XXX predictors: Number of Cylinders, Displacement, HP, Rear Axle Ratio, Weigth, Quater Mile Time, V/S, Transmission Type, Forward Gears and Carburetors. Together they accounted for xxx of the variance in MPG. Of all the variables xxx, xxx, and xxx were significant predictors of MPG. XXX ($ Beta = xxx $) and XXX were the strongest predictors and (Negatively or Positively) associated with MPG, whereas XXX were (Negativly or Positively) associeted with the outcome.
+In this project a multiple regression was conducted to examine the predictors of mpg in cars. Multiple variables were incorporated into different models and compared to determine the correct one. The final model has three predictors: Number of Cylinders, Weight and Transmission Type. Together they accounted for 81% of the variance in MPG. The all the variables Number of Cylinders and Weight were significant predictors of MPG. **cyl** $\beta_{2} = -1.5102$ and **wt** $\beta_{3} = -3.1251$ were the strongest predictors and Negatively associated with MPG, whereas **am** $\beta_{1} = 0.1765$ was not considered statistically significant since the null hypothesis could not be rejected. Inference done with a degree of uncertainty defined by an $\alpha = 0.05$ in every Hypothesis Test.
 
 \newpage
 
----
-
-## Appendix
-
-In this section we will show all the R code, figures and graphs that support the document and conclusions drawn in it.
-
-### R code
+## Appendix 1: R code
 
 In this first section of the appendix you can find all of the R code that is not shown in the main body of the document. 
 
@@ -103,25 +98,56 @@ In this first section of the appendix you can find all of the R code that is not
 
 *R Code #2 : Summary R Code*
 
-```{r Appendix2, ref.label="summary", echo=TRUE, eval=FALSE}
+```{r Appendix2, ref.label="Summary", echo=TRUE, eval=FALSE}
 ```
 
-*R Code #3 : Box Plot R Code*
+*R Code #3 : Correlation Matrix*
 
-```{r Appendix3, ref.label="plot1", echo=TRUE, eval=FALSE}
+```{r Appendix3, ref.label="correlation_matrix", echo=TRUE, eval=FALSE}
 ```
 
-*R Code #4 : Hypothesis Test R Code*
+*R Code #4 : Linear Models R Code*
 
-```{r Appendix4, ref.label="hypo_test", echo=TRUE, eval=FALSE}
+```{r Appendix4, ref.label="models", echo=TRUE, eval=FALSE}
 ```
 
-### Results
+*R Code #6 : ANOVAs R Code*
 
-*Result for Hypothesis Test 1 : Compare OJ vs VC for 0.5 mg/d*
-
-```{r Appendix5, echo=FALSE}
-hypo1
+```{r Appendix5, ref.label="anovas", echo=TRUE, eval=FALSE}
 ```
 
+*R Code #6 : Residual and Analysis Plots R Code*
+
+```{r Appendix6, ref.label="residual_plot", echo=TRUE, eval=FALSE}
+```
+
+## Appendix 2: Exploratory Data Analysis
+
+*Data Summary*
+
+```{r Appendix7, echo=FALSE}
+xsum
+```
+
+*Correlation Matrix*
+
+```{r Appendix8, echo=FALSE}
+xcor
+```
+
+## Appendix 3: ANOVAS and Model Analysis
+
+*ANOVA Results for Model Comparison*
+
+```{r Appendix9, echo=FALSE}
+anova1
+anova2
+anova3
+```
+
+*Final Linear Model*
+
+```{r Appendix10, echo=FALSE}
+summary(model3)
+```
 ---
