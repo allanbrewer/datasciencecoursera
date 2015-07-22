@@ -1,0 +1,63 @@
+---
+title: "Machine Learning Project"
+author: "Allan R Brewer Cappellin"
+date: "July 24, 2015"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    fig_width: 6
+    fig_height: 4
+subtitle: Predict the exercise is done using machine learning in R.
+fontsize: 10pt
+geometry: margin = 1in
+---
+
+## Executive Summary
+
+In this project we will train a machine learning model to determine if barbell lifts are done correctly. We must choose the varaibles and algorithim to use. The results must be validated against a testing data setmited to the Coursera Project Submission system.
+
+---
+
+## Exploratory Data Analysis and Summary
+
+```{r Load_Packages, echo=FALSE, message=FALSE, warning=FALSE}
+library(caret)
+library(rpart)
+library(AppliedPredictiveModeling)
+library(ElemStatLearn)
+```
+
+```{r Load_Data, echo=TRUE}
+train <- read.csv(file = "pml-training.csv")
+test <- read.csv(file = "pml-testing.csv")
+```
+
+
+```{r variable_analysis, echo=TRUE}
+
+```
+
+
+
+## Machine Learning Model Training
+
+
+```{r model_training, echo=FALSE}
+
+```
+
+
+### Final Model
+
+
+```{r model_summary, echo=FALSE}
+
+```
+
+
+```{r out_sample_error, echo=FALSE, fig.align='center'}
+
+```
+
+## Conclusions
+
