@@ -28,8 +28,8 @@ library(ElemStatLearn)
 ```
 
 ```{r Load_Data, echo=TRUE}
-train <- read.csv(file = "pml-training.csv")
-test <- read.csv(file = "pml-testing.csv")
+train <- read.csv(file = "pml-training.csv", stringsAsFactors = FALSE)
+test <- read.csv(file = "pml-testing.csv", stringsAsFactors = FALSE)
 ```
 
 
