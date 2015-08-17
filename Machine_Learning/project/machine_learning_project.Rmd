@@ -1,20 +1,20 @@
 ---
 title: "Machine Learning Project"
 author: "Allan R Brewer Cappellin"
-date: "July 24, 2015"
+date: "August 17, 2015"
 output:
   pdf_document:
     latex_engine: xelatex
     fig_width: 6
     fig_height: 4
-subtitle: Predict the exercise is done using machine learning in R.
+subtitle: Predict the quality of the exercise using machine learning in R.
 fontsize: 10pt
 geometry: margin = 1in
 ---
 
 ## Executive Summary
 
-In this project we will train a machine learning model to determine if barbell lifts are done correctly. We must choose the varaibles and algorithim to use. The results must be validated against a testing data setmited to the Coursera Project Submission system.
+In this project we will train a machine learning model to determine if barbell lifts are done correctly. We must choose the varaibles and algorithim to use. The results must be validated against a testing data submited to the Coursera Project Submission system.
 
 ---
 
@@ -24,20 +24,28 @@ In this project we will train a machine learning model to determine if barbell l
 library(caret)
 library(rpart)
 library(AppliedPredictiveModeling)
-library(ElemStatLearn)
 ```
 
+Firts we load the data sets using a vector for the different values that should be considered NA and discaded in our analysis.
+
 ```{r Load_Data, echo=TRUE}
-train <- read.csv(file = "pml-training.csv", stringsAsFactors = FALSE)
-test <- read.csv(file = "pml-testing.csv", stringsAsFactors = FALSE)
+dataset <- read.csv(file = "pml-training.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NaN", "", " ", "#DIV/0!"))
+exam <- read.csv(file = "pml-testing.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NaN", "", " ", "#DIV/0!"))
 ```
+
+With the training set loaded into the environment we proceed to check the data and determine the variables to incorporate into the analysis. Using simple line of code we subset the training data to exclude all the varaibles that contain more than 99% NA values. We must also check the other variables to determine if they are good features for the prediction. With a short investigation we can determine that the varibales with the row number, user names, timestamp and window are not usefull for training the algorithim, they are removed. To finish with cleaning up the data set we will transform the "classe" variable to a factor since it is the one we are tryin to predict.
 
 
 ```{r variable_analysis, echo=TRUE}
-
+data.ss <- dataset[,colSums(is.na(dataset)) < (0.01* nrow(dataset))]
+data.ss <- data.ss[,-(1:7)]
+data.ss$classe <- as.factor(data.ss$classe)
+inTrain <- createDataPartition(y = data.ss$classe, p = 0.6, list = FALSE)
+trainning <- data.ss[inTrain,]
+testing <- data.ss[-inTrain,]
 ```
 
-
+After cleaning the data and separating it we end up with a data set that can be used to train the model and a test set for validating it. The exam data set will be used for the submition part of the project. 
 
 ## Machine Learning Model Training
 
