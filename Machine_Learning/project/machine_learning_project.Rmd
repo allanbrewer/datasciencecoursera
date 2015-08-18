@@ -29,7 +29,9 @@ library(AppliedPredictiveModeling)
 Firts we load the data sets using a vector for the different values that should be considered NA and discaded in our analysis.
 
 ```{r Load_Data, echo=TRUE}
+# Load Train data from csv
 dataset <- read.csv(file = "pml-training.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NaN", "", " ", "#DIV/0!"))
+# Load Exam data from csv
 exam <- read.csv(file = "pml-testing.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NaN", "", " ", "#DIV/0!"))
 ```
 
@@ -37,21 +39,26 @@ With the training set loaded into the environment we proceed to check the data a
 
 
 ```{r variable_analysis, echo=TRUE}
+# Eliminate variables with 99% NAs
 data.ss <- dataset[,colSums(is.na(dataset)) < (0.01* nrow(dataset))]
+# Eliminate not usefull varaibles
 data.ss <- data.ss[,-(1:7)]
+# Convert Classe variable to Factor
 data.ss$classe <- as.factor(data.ss$classe)
-inTrain <- createDataPartition(y = data.ss$classe, p = 0.6, list = FALSE)
-trainning <- data.ss[inTrain,]
-testing <- data.ss[-inTrain,]
 ```
 
-After cleaning the data and separating it we end up with a data set that can be used to train the model and a test set for validating it. The exam data set will be used for the submition part of the project. 
+After cleaning the data we end up with a data set that can be used to train the model. In the next section we will train the model and apply K-Fold Cross Validation using the train_control function.
 
 ## Machine Learning Model Training
 
 
 ```{r model_training, echo=FALSE}
-
+# Set Seed
+set.seed(33212)
+# Define training control
+train_control <- trainControl(method = "cv", number = 10, p = 0.7)
+# Train the model 
+modelFit <- train(classe ~ . , data=data.ss, trControl = train_control, method = "rpart")
 ```
 
 
@@ -59,12 +66,16 @@ After cleaning the data and separating it we end up with a data set that can be 
 
 
 ```{r model_summary, echo=FALSE}
-
+# Print Model Summary
+print(modelFit$finalModel)
 ```
 
 
 ```{r out_sample_error, echo=FALSE, fig.align='center'}
-
+# Make predictions
+predictions <- predict(modelFit, data.ss[,1:52])
+# Summarize results
+confusionMatrix(predictions, data.ss$classe)
 ```
 
 ## Conclusions
