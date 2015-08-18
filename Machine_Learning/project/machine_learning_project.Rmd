@@ -41,6 +41,7 @@ With the training set loaded into the environment we proceed to check the data a
 ```{r variable_analysis, echo=TRUE}
 # Eliminate variables with 99% NAs
 data.ss <- dataset[,colSums(is.na(dataset)) < (0.01* nrow(dataset))]
+rm(dataset)
 # Eliminate not usefull varaibles
 data.ss <- data.ss[,-(1:7)]
 # Convert Classe variable to Factor
@@ -66,6 +67,8 @@ modelFit <- train(classe ~ . , data=data.ss, trControl = train_control, method =
 
 
 ```{r model_summary, echo=FALSE}
+# Print Fited Model
+modelFit
 # Print Model Summary
 print(modelFit$finalModel)
 ```
