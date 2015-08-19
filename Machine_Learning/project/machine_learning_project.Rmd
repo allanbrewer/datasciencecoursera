@@ -46,20 +46,25 @@ rm(dataset)
 data.ss <- data.ss[,-(1:7)]
 # Convert Classe variable to Factor
 data.ss$classe <- as.factor(data.ss$classe)
+# Separate Test data
+set.seed(4321)
+inTrain <- createDataPartition(data.ss$classe, p=0.80, list=FALSE)
+trainning <- data.ss[ inTrain,]
+testing <- data.ss[-inTrain,]
 ```
 
-After cleaning the data we end up with a data set that can be used to train the model. In the next section we will train the model and apply K-Fold Cross Validation using the train_control function.
+After cleaning the data we end up with a data set that can be used to train the model, a part of the set will be hold out to be tested later and determine the out of sample error. In the next section we will train the model and apply K-Fold Cross Validation using the train_control function.
 
 ## Machine Learning Model Training
 
 
 ```{r model_training, echo=FALSE}
 # Set Seed
-set.seed(33212)
+set.seed(1234)
 # Define training control
 train_control <- trainControl(method = "cv", number = 10, p = 0.7)
 # Train the model 
-modelFit <- train(classe ~ . , data=data.ss, trControl = train_control, method = "rpart")
+modelFit <- train(classe ~ . , data=trainning, trControl = train_control, method = "rpart")
 ```
 
 
@@ -76,9 +81,9 @@ print(modelFit$finalModel)
 
 ```{r out_sample_error, echo=FALSE, fig.align='center'}
 # Make predictions
-predictions <- predict(modelFit, data.ss[,1:52])
+predictions <- predict(modelFit, testing[,1:52])
 # Summarize results
-confusionMatrix(predictions, data.ss$classe)
+confusionMatrix(predictions, testing$classe)
 ```
 
 ## Conclusions
