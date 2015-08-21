@@ -23,6 +23,7 @@ In this project we will train a machine learning model to determine if barbell l
 ```{r Load_Packages, echo=FALSE, message=FALSE, warning=FALSE}
 library(caret)
 library(rpart)
+library(randomForest)
 library(AppliedPredictiveModeling)
 ```
 
@@ -48,7 +49,7 @@ data.ss <- data.ss[,-(1:7)]
 data.ss$classe <- as.factor(data.ss$classe)
 # Separate Test data
 set.seed(4321)
-inTrain <- createDataPartition(data.ss$classe, p=0.80, list=FALSE)
+inTrain <- createDataPartition(data.ss$classe, p=0.70, list=FALSE)
 trainning <- data.ss[ inTrain,]
 testing <- data.ss[-inTrain,]
 ```
@@ -62,9 +63,10 @@ After cleaning the data we end up with a data set that can be used to train the 
 # Set Seed
 set.seed(1234)
 # Define training control
-train_control <- trainControl(method = "cv", number = 10, p = 0.7)
+train_control <- trainControl(number = 10)
+customGrid <- data.frame(mtry=c(10, 26))
 # Train the model 
-modelFit <- train(classe ~ . , data=trainning, trControl = train_control, method = "rpart")
+modelFit <- train(classe ~ . ,trControl = train_control , data=trainning, method = "rf", tuneGrid=customGrid, ntree=100)
 ```
 
 
