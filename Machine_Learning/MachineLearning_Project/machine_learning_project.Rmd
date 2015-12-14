@@ -1,0 +1,98 @@
+---
+title: "Machine Learning Project"
+author: "Allan R Brewer Cappellin"
+date: "August 17, 2015"
+output:
+  html_document: default
+  pdf_document:
+    fig_height: 4
+    fig_width: 6
+    latex_engine: xelatex
+geometry: margin = 1in
+subtitle: Predict the quality of Weight Lifting Exercises using machine learning in
+  R.
+fontsize: 10pt
+---
+
+## Executive Summary
+
+In this project we will train a machine learning model to determine if weight lifts are done correctly. We must choose the variables and algorithm to use. The results must be validated against a testing data submitted to the Coursera Project Submission system. The final model was trained using Random Forest with the Caret Package with an estimated out-of-sample error of 0.6% determined using a hold out set.
+
+---
+
+## Loading and Preparing the Data
+
+```{r Load_Packages, echo=TRUE, message=FALSE, warning=FALSE}
+library(caret)
+library(rpart)
+library(randomForest)
+library(AppliedPredictiveModeling)
+```
+
+First we load the data sets and identify the different values that should be considered NA and discarded in our analysis.
+
+```{r Load_Data, echo=TRUE}
+# Load Train data from csv
+dataset <- read.csv(file = "pml-training.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NaN", "", " ", "#DIV/0!"))
+# Load Exam data from csv
+exam <- read.csv(file = "pml-testing.csv", stringsAsFactors = FALSE, na.strings = c("NA", "NaN", "", " ", "#DIV/0!"))
+```
+
+With the training set loaded into the environment we proceed to check the data and determine the variables to incorporate into the analysis. Using simple line of code we subset the training data to exclude all the variables that contain more than 99% NA values. We must also check the other variables to determine if they are good features for the prediction. With a short investigation we can determine that the variables with the row number, user names, timestamps and window are not useful for training the algorithm, they are removed. To finish with cleaning up the data set we will transform the "classe" variable to a factor since it is the one we are trying to predict.
+
+
+```{r variable_analysis, echo=TRUE}
+# Eliminate variables with 99% NAs
+data.ss <- dataset[,colSums(is.na(dataset)) < (0.01* nrow(dataset))]
+rm(dataset)
+# Eliminate not usefull varaibles
+data.ss <- data.ss[,-(1:7)]
+# Convert Classe variable to Factor
+data.ss$classe <- as.factor(data.ss$classe)
+# Separate Test data
+set.seed(4321)
+inTrain <- createDataPartition(data.ss$classe, p=0.70, list=FALSE)
+training <- data.ss[ inTrain,]
+testing <- data.ss[-inTrain,]
+```
+
+After cleaning the data we end up with a data set that can be used to train the model, a part of the set will be held out to do Cross Validation and tested to estimate the out of sample error. The next section will contain the code to train the Random Forest Model.
+
+## Machine Learning Model Training
+
+In this section we will train the Model and apply Bootstrap Cross Validation using the train_control function. We will set the model to train 10 Random Forest using cross validation, each Forest will contain 100 trees and each will be trained sampling 10 variables at each split.
+
+```{r model_training, echo=TRUE}
+# Set Seed
+set.seed(1234)
+# Define training control
+train_control <- trainControl(number = 10)
+customGrid <- data.frame(mtry=10)
+# Train the model 
+modelFit <- train(classe ~ . ,trControl = train_control , data=training, method = "rf", tuneGrid=customGrid, ntree=100)
+```
+
+With the model trained we can proceed to determine the in and out of sample error as well as predict the answers for the submission part of the project.
+
+### Final Model
+
+Next we will print the Model and a Summary of its accuracy and in-sample error.
+
+```{r model_summary, echo=FALSE}
+# Print Fited Model
+modelFit
+# Print Model Summary
+print(modelFit$finalModel)
+```
+
+After establishing that the model has a very high accuracy and a good prediction power with in the training data set we will predict values for a hold out set (testing) and determine the out-of-sample error
+
+```{r out_sample_error, echo=FALSE, fig.align='center'}
+# Make predictions
+predictions <- predict(modelFit, testing)
+answers <- as.character(predict(modelFit, exam))
+# Summarize results
+confusionMatrix(predictions, testing$classe)
+```
+
+The confusion matrix for the out-of-sample error is almost perfect. The model predicted with a 99.4% accuracy the values of the hold out set. The out-of-sample error is estimated to be 0.6% using cross validation.
